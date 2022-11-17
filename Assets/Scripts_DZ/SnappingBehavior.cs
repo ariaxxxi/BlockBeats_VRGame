@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 
 /*
@@ -43,14 +44,10 @@ public class SnappingBehavior : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        //clear previous trigger stay values
-
-
 
         Transform otherTF = other.gameObject.transform;
         if (otherTF.tag == "element")
         {
-            //print("HHAHHAHAHAHAH");
             //correct the other's orientation
             //rounding xyz rotation to closest 0, 90 or 180 degrees
             Vector3 rotationAngles = otherTF.eulerAngles;
@@ -58,7 +55,7 @@ public class SnappingBehavior : MonoBehaviour
             rotationAngles.y = Mathf.Round(rotationAngles.y / 90) * 90;
             rotationAngles.z = Mathf.Round(rotationAngles.z / 90) * 90;
             print(rotationAngles);
-            //otherTF.eulerAngles = rotationAngles;
+            otherTF.eulerAngles = rotationAngles;
 
             Vector3 TFPos = otherTF.position;
             Vector3 basePos = transform.parent.position;
@@ -78,22 +75,6 @@ public class SnappingBehavior : MonoBehaviour
                 snapPtArray[5] = new Vector3(basePos.x, basePos.y, basePos.z + 0.2f);
 
 
-                //Vector3 xLeft = new Vector3(TFPos.x - 2f, TFPos.y, TFPos.z);
-                //Vector3 xRight = new Vector3(TFPos.x + 2f, TFPos.y, TFPos.z);
-                //Vector3 yUp = new Vector3(TFPos.x, TFPos.y + 2f, TFPos.z);
-                //Vector3 yDown = new Vector3(TFPos.x, TFPos.y - 2f, TFPos.z);
-                //Vector3 zFront = new Vector3(TFPos.x, TFPos.y, TFPos.z - 2f);
-                //Vector3 zBack = new Vector3(TFPos.x, TFPos.y, TFPos.z + 2f);
-
-                //temp
-                /*
-                foreach (Vector3 item in snapPtArray)
-                {
-                    GameObject newCube = Instantiate(snappingPreviewCube);
-                    newCube.transform.position = item;
-                }
-                */
-
                 //calculate distances to snapping points
                 float minDis = 100f;
                 int correctSnapPtIndex = 0;
@@ -107,27 +88,13 @@ public class SnappingBehavior : MonoBehaviour
                         correctSnapPtIndex = i;
                     }
                 }
-                previewObj.transform.position = snapPtArray[correctSnapPtIndex];
-                //snappingPreviewCube.transform.position = snapPtArray[correctSnapPtIndex];
+                //previewObj.transform.position = snapPtArray[correctSnapPtIndex];
+                previewObj.transform.DOMove(snapPtArray[correctSnapPtIndex], 0.1f).SetEase(Ease.OutSine);
+                otherTF.position = snapPtArray[correctSnapPtIndex];
 
-
-
-
-
-                /*
-                float disXLeft = Vector3.Distance(previewObj.transform.position, xLeft);
-                float disXRight = Vector3.Distance(previewObj.transform.position, xRight);
-                float disYUp = Vector3.Distance(previewObj.transform.position, yUp);
-                float disYDown = Vector3.Distance(previewObj.transform.position, yDown);
-                float disZFront = Vector3.Distance(previewObj.transform.position, zFront);
-                float disZBack = Vector3.Distance(previewObj.transform.position, zBack);
-                */
 
 
             }
-            
-
-            //snap position
 
 
         }
