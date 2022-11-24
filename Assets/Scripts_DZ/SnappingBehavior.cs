@@ -14,12 +14,22 @@ public class SnappingBehavior : MonoBehaviour
     //public GameObject snappingPreviewCube;
 
     private GameObject previewObj;
+    private bool isSnapped = false;
+    private Rigidbody parentRB;
+    private Rigidbody otherRB;
+    public enum Role
+    {
+        BuiltBlock,
+        SnappingBlock
+    }
+    public Role currentRole;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        //get parent rigidbody
+        parentRB = transform.parent.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -31,8 +41,9 @@ public class SnappingBehavior : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Transform otherTF = other.gameObject.transform;
+        otherRB = other.transform.GetComponent<Rigidbody>();
 
-        if (otherTF.tag == "element" && !previewObj)
+        if (otherTF.tag == "element" && currentRole == Role.BuiltBlock && !previewObj)
         {
             //duplicate to show preview, otherwise hand-tracking overwrites object position
             previewObj = Instantiate(otherTF.gameObject);
@@ -46,7 +57,9 @@ public class SnappingBehavior : MonoBehaviour
     {
 
         Transform otherTF = other.gameObject.transform;
-        if (otherTF.tag == "element")
+        otherRB = other.transform.GetComponent<Rigidbody>();
+
+        if (otherTF.tag == "element" && currentRole == Role.BuiltBlock)
         {
             //correct the other's orientation
             //rounding xyz rotation to closest 0, 90 or 180 degrees
@@ -91,6 +104,7 @@ public class SnappingBehavior : MonoBehaviour
                 //previewObj.transform.position = snapPtArray[correctSnapPtIndex];
                 previewObj.transform.DOMove(snapPtArray[correctSnapPtIndex], 0.1f).SetEase(Ease.OutSine);
                 otherTF.position = snapPtArray[correctSnapPtIndex];
+                AfterSnapping();
 
 
 
@@ -105,7 +119,45 @@ public class SnappingBehavior : MonoBehaviour
         if (previewObj)
         {
             Destroy(previewObj.gameObject);
+            ExitSnap();
         }
+    }
+
+    private void AfterSnapping()
+    {
+        if (otherRB)
+        {
+            isSnapped = true;
+            otherRB.isKinematic = true;
+            otherRB.useGravity = false;
+        }
+        
+    }
+
+    private void ExitSnap()
+    {
+        if (otherRB)
+        {
+            isSnapped = false;
+            otherRB.useGravity = true;
+        }
+
+        
+
+    }
+
+    public void Grabbing()
+    {
+        //currentRole = Role.SnappingBlock;
+        //parentRB.isKinematic = true;
+        //parentRB.useGravity = false;
+    }
+
+    public void Releasing()
+    {
+
+        parentRB.useGravity = false;
+        
     }
 
 
