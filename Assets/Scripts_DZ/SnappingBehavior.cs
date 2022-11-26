@@ -139,6 +139,10 @@ public class SnappingBehavior : MonoBehaviour
         if (otherRB)
         {
             isSnapped = false;
+
+            //does not work; my guess is when other is grabbed, it is always kinematic
+            otherRB.isKinematic = false; 
+
             otherRB.useGravity = true;
         }
 
@@ -157,7 +161,8 @@ public class SnappingBehavior : MonoBehaviour
     {
 
         parentRB.useGravity = false;
-        
+        parentRB.isKinematic = false;
+
     }
 
 
