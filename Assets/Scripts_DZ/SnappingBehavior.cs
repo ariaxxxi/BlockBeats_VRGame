@@ -17,6 +17,7 @@ public class SnappingBehavior : MonoBehaviour
     private bool isSnapped = false;
     private Rigidbody parentRB;
     private Rigidbody otherRB;
+    private GameObject otherGO;
     public enum Role
     {
         BuiltBlock,
@@ -42,6 +43,7 @@ public class SnappingBehavior : MonoBehaviour
     {
         Transform otherTF = other.gameObject.transform;
         otherRB = other.transform.GetComponent<Rigidbody>();
+        otherGO = other.gameObject;
 
         if (otherTF.tag == "element" && currentRole == Role.BuiltBlock && !previewObj)
         {
@@ -58,6 +60,7 @@ public class SnappingBehavior : MonoBehaviour
 
         Transform otherTF = other.gameObject.transform;
         otherRB = other.transform.GetComponent<Rigidbody>();
+        otherGO = other.gameObject;
 
         if (otherTF.tag == "element" && currentRole == Role.BuiltBlock)
         {
@@ -116,10 +119,16 @@ public class SnappingBehavior : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (previewObj)
+        Transform otherTF = other.gameObject.transform;
+        otherRB = other.transform.GetComponent<Rigidbody>();
+        otherGO = other.gameObject;
+
+        if (previewObj && otherTF.tag == "snapped" && currentRole == Role.BuiltBlock)
         {
+            
+            ExitSnap(other);
             Destroy(previewObj.gameObject);
-            ExitSnap();
+            
         }
     }
 
@@ -130,20 +139,33 @@ public class SnappingBehavior : MonoBehaviour
             isSnapped = true;
             otherRB.isKinematic = true;
             otherRB.useGravity = false;
+
+            if (otherGO)
+            {
+                otherGO.tag = "snapped";
+            }
+            
         }
         
     }
 
-    private void ExitSnap()
+    private void ExitSnap(Collider other)
     {
+        print("CHECK1");
+
         if (otherRB)
         {
+
+            print("CHECK2");
+
             isSnapped = false;
 
             //does not work; my guess is when other is grabbed, it is always kinematic
             otherRB.isKinematic = false; 
 
             otherRB.useGravity = true;
+
+            other.gameObject.tag = "element";
         }
 
         
