@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - element
+  - G
+  - R
+  - B
+  - snapped
+  - preview
   layers:
   - Default
   - TransparentFX

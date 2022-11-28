@@ -8,8 +8,10 @@ using DG.Tweening;
  * This script is attached to the snapping collider game object for each combined block
  */
 
-public class SnappingBehavior : MonoBehaviour
+public class SnappingBehavior_Archived : MonoBehaviour
 {
+    //temp
+    //public GameObject snappingPreviewCube;
 
     private GameObject previewObj;
     private bool isSnapped = false;
@@ -36,11 +38,6 @@ public class SnappingBehavior : MonoBehaviour
     {
         
     }
-
-    /*
-     * SELF RELATED
-     * 
-     */
 
     void OnTriggerEnter(Collider other)
     {
@@ -110,7 +107,7 @@ public class SnappingBehavior : MonoBehaviour
                 //previewObj.transform.position = snapPtArray[correctSnapPtIndex];
                 previewObj.transform.DOMove(snapPtArray[correctSnapPtIndex], 0.1f).SetEase(Ease.OutSine);
                 otherTF.position = snapPtArray[correctSnapPtIndex];
-                AfterSnapping(other);
+                AfterSnapping();
 
 
 
@@ -126,20 +123,16 @@ public class SnappingBehavior : MonoBehaviour
         otherRB = other.transform.GetComponent<Rigidbody>();
         otherGO = other.gameObject;
 
-        if (previewObj && currentRole == Role.BuiltBlock)
+        if (previewObj && otherTF.tag == "snapped" && currentRole == Role.BuiltBlock)
         {
+            
             ExitSnap(other);
             Destroy(previewObj.gameObject);
             
         }
-
-        if (other.gameObject.tag == "snapped" && currentRole == Role.BuiltBlock)
-        {
-            ExitSnap(other);
-        }
     }
 
-    private void AfterSnapping(Collider other)
+    private void AfterSnapping()
     {
         if (otherRB)
         {
@@ -147,9 +140,10 @@ public class SnappingBehavior : MonoBehaviour
             otherRB.isKinematic = true;
             otherRB.useGravity = false;
 
-
-            other.gameObject.tag = "snapped";
-
+            if (otherGO)
+            {
+                otherGO.tag = "snapped";
+            }
             
         }
         
@@ -159,15 +153,20 @@ public class SnappingBehavior : MonoBehaviour
     {
         print("CHECK1");
 
-        isSnapped = false;
+        if (otherRB)
+        {
 
-        //does not work; my guess is when other is grabbed, it is always kinematic
-        //otherRB.isKinematic = false; 
+            print("CHECK2");
 
-        //otherRB.useGravity = true;
+            isSnapped = false;
 
-        other.gameObject.tag = "element";
+            //does not work; my guess is when other is grabbed, it is always kinematic
+            otherRB.isKinematic = false; 
 
+            otherRB.useGravity = true;
+
+            other.gameObject.tag = "element";
+        }
 
         
 
