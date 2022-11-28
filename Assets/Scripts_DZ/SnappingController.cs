@@ -61,6 +61,18 @@ public class SnappingController : MonoBehaviour
 
             }
 
+            if (other.tag == "snapped")
+            {
+                other.gameObject.tag = "element";
+
+                // Change other Block Role to SnappingRole (Block becomes available to snap again)
+                // Access SnappingController in child
+                if (other.transform.GetChild(0))
+                {
+                    other.transform.GetChild(0).GetComponent<SnappingController>().currentRole = Role.SnappingBlock;
+                }
+            }
+
         }
 
     }
@@ -120,6 +132,15 @@ public class SnappingController : MonoBehaviour
                     // If hand stops grabbing, destroy preview to confirm snapping
                     if (otherTF.GetComponent<BlockManager>().IsGrabbing == false)
                     {
+                        otherTF.gameObject.tag = "snapped";
+
+                        // Change other Block Role to BuiltRole
+                        // Access SnappingController in child
+                        if (otherTF.GetChild(0))
+                        {
+                            otherTF.GetChild(0).GetComponent<SnappingController>().currentRole = Role.BuiltBlock;
+                        }
+
                         Destroy(previewObj.gameObject);
                     }
                     

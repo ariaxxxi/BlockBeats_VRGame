@@ -32,14 +32,14 @@ public class BlockManager : MonoBehaviour
     public void isGrabbed()
     {
         grabStarted = true;
-        print("GRAB START");
+        //print("GRAB START");
     }
 
     public void isReleased()
     {
         grabStarted = false;
         grabProcess = false;
-        print("GRAB END");
+        //print("GRAB END");
     }
 
     public void isGrabbing()
@@ -47,7 +47,7 @@ public class BlockManager : MonoBehaviour
         if (grabStarted)
         {
             grabProcess = true;
-            print("isGRABBBING");
+            //print("isGRABBBING");
         }
 
     }
