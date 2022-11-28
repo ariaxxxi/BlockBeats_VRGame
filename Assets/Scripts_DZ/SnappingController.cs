@@ -13,7 +13,8 @@ public class SnappingController : MonoBehaviour
     }
     public Role currentRole;
 
-
+    public bool[] interfaceArray = new bool[6];
+    public string[] snappedObjNameArray = new string[6];
 
     // Snapping Preview Object
     private GameObject previewObj;
@@ -21,7 +22,11 @@ public class SnappingController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // Intialize interface array - all faces are available to snap in the beginning
+        for (int i = 0; i < interfaceArray.Length; i++)
+        {
+            interfaceArray[i] = false;
+        }
     }
 
     // Update is called once per frame
@@ -71,6 +76,11 @@ public class SnappingController : MonoBehaviour
                 {
                     other.transform.GetChild(0).GetComponent<SnappingController>().currentRole = Role.SnappingBlock;
                 }
+
+                // Update face availability - interface is now available
+                int interfaceIndex = System.Array.IndexOf(snappedObjNameArray, other.gameObject.name);
+                interfaceArray[interfaceIndex] = false;
+                snappedObjNameArray[interfaceIndex] = null;
             }
 
         }
@@ -123,26 +133,38 @@ public class SnappingController : MonoBehaviour
                             correctSnapPtIndex = i;
                         }
                     }
-                    
-                    // NOTE: preview gameoject and actual object both exist
-                    //previewObj.transform.position = snapPtArray[correctSnapPtIndex];
-                    previewObj.transform.DOMove(snapPtArray[correctSnapPtIndex], 0.1f).SetEase(Ease.OutSine);
-                    otherTF.position = snapPtArray[correctSnapPtIndex];
-                    
-                    // If hand stops grabbing, destroy preview to confirm snapping
-                    if (otherTF.GetComponent<BlockManager>().IsGrabbing == false)
+
+                    // Check face availability - good to snap if face is available
+                    if (interfaceArray[correctSnapPtIndex] == false)
                     {
-                        otherTF.gameObject.tag = "snapped";
+                        // NOTE: preview gameoject and actual object both exist
+                        //previewObj.transform.position = snapPtArray[correctSnapPtIndex];
+                        previewObj.transform.DOMove(snapPtArray[correctSnapPtIndex], 0.1f).SetEase(Ease.OutSine);
+                        otherTF.position = snapPtArray[correctSnapPtIndex];
 
-                        // Change other Block Role to BuiltRole
-                        // Access SnappingController in child
-                        if (otherTF.GetChild(0))
+                        
+
+                        // If hand stops grabbing, destroy preview to confirm snapping
+                        if (otherTF.GetComponent<BlockManager>().IsGrabbing == false)
                         {
-                            otherTF.GetChild(0).GetComponent<SnappingController>().currentRole = Role.BuiltBlock;
-                        }
+                            otherTF.gameObject.tag = "snapped";
 
-                        Destroy(previewObj.gameObject);
+                            // Change other Block Role to BuiltRole
+                            // Access SnappingController in child
+                            if (otherTF.GetChild(0))
+                            {
+                                otherTF.GetChild(0).GetComponent<SnappingController>().currentRole = Role.BuiltBlock;
+                            }
+
+                            Destroy(previewObj.gameObject);
+
+                            // Make face not available for snapping
+                            interfaceArray[correctSnapPtIndex] = true;
+                            snappedObjNameArray[correctSnapPtIndex] = other.gameObject.name;
+                        }
                     }
+
+                    
                     
                 }
             }
