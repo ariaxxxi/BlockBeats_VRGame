@@ -9,10 +9,18 @@ public class BlockManager : MonoBehaviour
     private bool grabStarted = false;
     private bool grabProcess = false;
 
+    public bool inPreview = false;
+
     // Properties
     public bool IsGrabbing
     {
         get { return grabProcess; }
+    }
+
+    public bool InPreview
+    {
+        get { return inPreview; }
+        set { inPreview = value; }
     }
 
     // Start is called before the first frame update
