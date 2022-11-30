@@ -17,8 +17,14 @@ public class SnappingController : MonoBehaviour
     public string[] snappedObjNameArray = new string[6];
     //public Dictionary<bool, string> interfaceObjects = new Dictionary<bool, string>();
 
+    public int currentBuiltBlockInterfaceIndex;
+    public int currentSnapBlockInterfaceIndex;
+
     // Snapping Preview Object
     private GameObject previewObj;
+
+    // Storing previous orientation to check for audio effect change
+    private Vector3 prevOrientation;
 
     // Start is called before the first frame update
     void Start()
@@ -26,8 +32,10 @@ public class SnappingController : MonoBehaviour
         // Intialize interface array - all faces are available to snap in the beginning
         //for (int i = 0; i < interfaceArray.Length; i++)
         //{
-            //interfaceArray[i] = false;
+        //  interfaceArray[i] = false;
         //}
+
+        prevOrientation = new Vector3(0f, 0f, 0f);
 
     }
 
@@ -150,12 +158,12 @@ public class SnappingController : MonoBehaviour
                     // add position snapping
                     // six snapping points
                     Vector3[] snapPtArray = new Vector3[6];
-                    snapPtArray[0] = new Vector3(basePos.x - 0.2f, basePos.y, basePos.z);
-                    snapPtArray[1] = new Vector3(basePos.x + 0.2f, basePos.y, basePos.z);
-                    snapPtArray[2] = new Vector3(basePos.x, basePos.y + 0.2f, basePos.z);
-                    snapPtArray[3] = new Vector3(basePos.x, basePos.y - 0.2f, basePos.z);
-                    snapPtArray[4] = new Vector3(basePos.x, basePos.y, basePos.z - 0.2f);
-                    snapPtArray[5] = new Vector3(basePos.x, basePos.y, basePos.z + 0.2f);
+                    snapPtArray[0] = new Vector3(basePos.x - 0.2f, basePos.y, basePos.z); // A
+                    snapPtArray[1] = new Vector3(basePos.x + 0.2f, basePos.y, basePos.z); // A
+                    snapPtArray[2] = new Vector3(basePos.x, basePos.y + 0.2f, basePos.z); // B
+                    snapPtArray[3] = new Vector3(basePos.x, basePos.y - 0.2f, basePos.z); // B
+                    snapPtArray[4] = new Vector3(basePos.x, basePos.y, basePos.z - 0.2f); // C
+                    snapPtArray[5] = new Vector3(basePos.x, basePos.y, basePos.z + 0.2f); // C
 
 
                     // calculate distances to snapping points
@@ -179,7 +187,33 @@ public class SnappingController : MonoBehaviour
                         previewObj.transform.DOMove(snapPtArray[correctSnapPtIndex], 0.1f).SetEase(Ease.OutSine);
                         otherTF.position = snapPtArray[correctSnapPtIndex];
 
-                        
+                        // TEMP ----- Switch audio effects ------
+                        currentBuiltBlockInterfaceIndex = correctSnapPtIndex;
+
+                        if (!prevOrientation.Equals(rotationAngles))
+                        {
+                            if (prevOrientation.x != rotationAngles.x && otherTF.GetComponent<AudioBehavior>())
+                            {
+                                // switch to FX track 1
+                                otherTF.GetComponent<AudioBehavior>().PlayFX1();
+                            }
+                            if (prevOrientation.y != rotationAngles.y && otherTF.GetComponent<AudioBehavior>())
+                            {
+                                // switch to FX track 1
+                                otherTF.GetComponent<AudioBehavior>().PlayFX2();
+                            }
+                            if (prevOrientation.z != rotationAngles.z && otherTF.GetComponent<AudioBehavior>())
+                            {
+                                // switch to FX track 1
+                                otherTF.GetComponent<AudioBehavior>().PlayFX3();
+                            }
+
+                            prevOrientation = rotationAngles;
+                            print(rotationAngles);
+                        }
+
+
+                        // TEMP ----- Switch audio effects ------
 
                         // If hand stops grabbing, destroy preview to confirm snapping
                         if (otherTF.GetComponent<BlockManager>().IsGrabbing == false)
@@ -212,6 +246,19 @@ public class SnappingController : MonoBehaviour
                 }
             }
         }
+
+        if (currentRole == Role.SnappingBlock)
+        {
+            Transform otherTF = other.gameObject.transform;
+            if (otherTF.tag == "snapped")
+            {
+                // Calculating six snapping positions to keep track of colliding faces does not
+                // work because this does not account for changing orientation
+                // In the future, may need to use child colliders to rewrite the snapping logic
+            }
+        }
+
+
     }
 
 
