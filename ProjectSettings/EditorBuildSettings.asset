@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/BlockBeats_V1.unity
-    guid: 3db98f2f7700eb84b9e8a038e28e46ac
+    path: Assets/Scenes/BlockBeats_V1127.unity
+    guid: a0f33a969d976224eb9cb660d4772947
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: f1aaf3f0232f42c46a5941e46fbc8477, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: b2fd599e2f8515341ae85d69350d10fe, type: 2}
