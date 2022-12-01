@@ -195,17 +195,17 @@ public class SnappingController : MonoBehaviour
                             if (prevOrientation.x != rotationAngles.x && otherTF.GetComponent<AudioBehavior>())
                             {
                                 // switch to FX track 1
-                                otherTF.GetComponent<AudioBehavior>().PlayFX1();
+                                otherTF.GetComponent<AudioBehavior>().PlayBase();
                             }
                             if (prevOrientation.y != rotationAngles.y && otherTF.GetComponent<AudioBehavior>())
                             {
                                 // switch to FX track 1
-                                otherTF.GetComponent<AudioBehavior>().PlayFX2();
+                                otherTF.GetComponent<AudioBehavior>().PlayFX1();
                             }
                             if (prevOrientation.z != rotationAngles.z && otherTF.GetComponent<AudioBehavior>())
                             {
                                 // switch to FX track 1
-                                otherTF.GetComponent<AudioBehavior>().PlayFX3();
+                                otherTF.GetComponent<AudioBehavior>().PlayFX2();
                             }
 
                             prevOrientation = rotationAngles;

@@ -80,6 +80,8 @@ public class AudioBehavior : MonoBehaviour
 
     public void PlayBase()
     {
+        shouldPlayBase = true;
+
         baseTrack.mute = false;
         trackFX_1.mute = true;
         trackFX_2.mute = true;
